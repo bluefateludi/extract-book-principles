@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "book-principles"
+version = "0.1.0"
+description = "Core tools for inspecting EPUBs and validating book knowledge packages"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6"]
+
+[project.scripts]
+book-principles = "book_principles.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

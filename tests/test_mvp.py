@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import os
 import shutil
 import subprocess
 import sys
@@ -15,6 +16,13 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "extract-book-principles"
 PACKAGE = ROOT / "books" / "designing-your-life" / "zh-cn-2017-epub"
+SOURCE = ROOT / "src"
+
+
+def module_command(*arguments: str) -> tuple[list[str], dict[str, str]]:
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = str(SOURCE)
+    return [sys.executable, "-m", "book_principles", *arguments], environment
 
 
 def load_parser_module():
@@ -27,6 +35,24 @@ def load_parser_module():
 
 
 class MvpTests(unittest.TestCase):
+    def test_module_cli_validates_generated_view(self) -> None:
+        command, environment = module_command("validate", str(PACKAGE), "--check-generated")
+        result = subprocess.run(command, env=environment, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(result.stdout, f"OK: {PACKAGE}\n")
+
+    def test_module_cli_render_preserves_sample_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / "package"
+            shutil.copytree(PACKAGE, package)
+            generated = package / "principles.md"
+            expected = generated.read_text(encoding="utf-8")
+            generated.unlink()
+            command, environment = module_command("render", str(package))
+            result = subprocess.run(command, env=environment, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(generated.read_text(encoding="utf-8"), expected)
+
     def test_package_and_generated_view_validate(self) -> None:
         command = [
             sys.executable,
