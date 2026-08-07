@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import os
 import shutil
 import subprocess
 import sys
@@ -15,6 +16,13 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "extract-book-principles"
 PACKAGE = ROOT / "books" / "designing-your-life" / "zh-cn-2017-epub"
+SOURCE = ROOT / "src"
+
+
+def module_command(*arguments: str) -> tuple[list[str], dict[str, str]]:
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = str(SOURCE)
+    return [sys.executable, "-m", "book_principles", *arguments], environment
 
 
 def load_parser_module():
@@ -27,6 +35,24 @@ def load_parser_module():
 
 
 class MvpTests(unittest.TestCase):
+    def test_module_cli_validates_generated_view(self) -> None:
+        command, environment = module_command("validate", str(PACKAGE), "--check-generated")
+        result = subprocess.run(command, env=environment, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(result.stdout, f"OK: {PACKAGE}\n")
+
+    def test_module_cli_render_preserves_sample_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / "designing-your-life" / "zh-cn-2017-epub"
+            shutil.copytree(PACKAGE, package)
+            generated = package / "principles.md"
+            expected = generated.read_text(encoding="utf-8")
+            generated.unlink()
+            command, environment = module_command("render", str(package))
+            result = subprocess.run(command, env=environment, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(generated.read_text(encoding="utf-8"), expected)
+
     def test_package_and_generated_view_validate(self) -> None:
         command = [
             sys.executable,
@@ -41,15 +67,19 @@ class MvpTests(unittest.TestCase):
         inputs = list((ROOT / "private" / "inputs").glob("*.epub"))
         if not inputs:
             self.skipTest("private EPUB is intentionally absent")
-        self.assertEqual(len(inputs), 1, "expected exactly one private MVP EPUB")
+        self.assertEqual(len(inputs), 1, "expected exactly one private source EPUB")
         epub = inputs[0]
         parser = load_parser_module()
-        parsed = parser.inspect_epub(epub, "1")
-        documents = {doc["doc_path"]: doc for doc in parsed["chapter"]["documents"]}
         principles = yaml.safe_load((PACKAGE / "principles.yaml").read_text(encoding="utf-8"))
         metadata = yaml.safe_load((PACKAGE / "metadata.yaml").read_text(encoding="utf-8"))
+        documents = {}
+        parsed = None
+        for chapter in metadata["scope"]["chapters"]:
+            parsed = parser.inspect_epub(epub, str(chapter))
+            documents.update({doc["doc_path"]: doc for doc in parsed["chapter"]["documents"]})
         digest = hashlib.sha256(epub.read_bytes()).hexdigest()
         self.assertEqual(metadata["processing"]["source_sha256"], digest)
+        assert parsed is not None
         self.assertEqual(parsed["metadata"]["identifiers"][-1], metadata["isbn"])
         for principle in principles["principles"]:
             for ref in principle["source_refs"]:

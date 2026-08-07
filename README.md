@@ -10,17 +10,41 @@
 2. 为每本书生成标准化知识包，既方便人类阅读，也方便 AI 检索、验证和应用。
 3. 按需将高价值知识包发布为独立的书籍 Skill。
 
-## 计划结构
+## 当前结构
 
 ```text
-skills/                    # 通用书籍原则提炼 Skill
+src/book_principles/       # 确定性的 EPUB、校验和渲染工具包
+skills/                    # 通用书籍原则提炼 Skill 源目录
+.agents/skills/            # Codex 仓库级 Skill 发现入口
 books/                     # 每本书的标准化知识包
-dist/skills/               # 从知识包生成的书籍 Skill
-schemas/                   # 知识包数据结构
 tests/                     # 结构与质量验证
 ```
 
-每个书籍知识包计划包含：
+项目采用“Python 工具包 + Skill + 知识包”分层：工具包执行确定性操作，Skill 负责提炼、分类和审核流程，知识包保存可追溯结果。
+
+## 安装与使用
+
+需要 Python 3.10 或更高版本：
+
+```bash
+python -m pip install -e .
+book-principles inspect private/inputs/book.epub --chapter 1 --output private/chapter-1.json
+book-principles validate books/<book-id>/<edition-id> --check-generated
+book-principles render books/<book-id>/<edition-id>
+```
+
+源码检出但尚未安装时，可直接运行 Skill 中保留的兼容入口：
+
+```bash
+python skills/extract-book-principles/scripts/parse_epub.py private/inputs/book.epub --chapter 1
+python skills/extract-book-principles/scripts/validate_book_package.py books/<book-id>/<edition-id> --check-generated
+```
+
+本仓库的 Skill 通过 `.agents/skills/extract-book-principles` 被 Codex 发现。0.1 版本定位为仓库级 Skill；未来需要独立分发时再打包为插件。
+
+所有受版权保护的书籍和可能包含全文的解析输出必须放在 `private/` 下。常见电子书格式也由 `.gitignore` 默认拦截。
+
+每个书籍知识包包含：
 
 ```text
 metadata.yaml              # 书籍版本与处理状态
@@ -28,8 +52,9 @@ book-map.md                # 全书结构和论证脉络
 summary.md                 # 人类友好的内容概要
 principles.yaml            # AI 友好的结构化原则，作为唯一事实来源
 principles.md              # 从 YAML 生成的人类阅读版
-evidence.md                # 原则与原书章节依据
 ```
+
+当前 MVP 将证据摘要与定位保存在 `principles.yaml`，并生成到 `principles.md`；独立的 `evidence.md` 留待完整样本闭环验证后再决定。
 
 ## 实施阶段
 
@@ -60,6 +85,7 @@ evidence.md                # 原则与原书章节依据
 ## 维护原则
 
 - 通用 Skill 维护方法，书籍知识包维护内容，发布 Skill 维护交付形式。
+- Python 工具包维护确定性能力；Skill 脚本只保留兼容入口。
 - `principles.yaml` 是原则内容的唯一事实来源，其他格式由它生成。
 - 区分作者明确提出的原则与 AI 根据内容归纳的原则。
 - 每条原则保留适用条件、边界和原书依据。
