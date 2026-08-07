@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
-"""Compatibility entry point for the book_principles EPUB inspector."""
+"""Stable Skill entry point for self-contained EPUB inspection."""
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-
-SOURCE_ROOT = Path(__file__).resolve().parents[3] / "src"
-if str(SOURCE_ROOT) not in sys.path:
-    sys.path.insert(0, str(SOURCE_ROOT))
-
-from book_principles.epub import inspect_epub, main  # noqa: E402
+from epub_inspector import inspect_epub, main
 
 
 __all__ = ["inspect_epub", "main"]

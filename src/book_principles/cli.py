@@ -14,7 +14,7 @@ from book_principles.epub import inspect_epub
 
 def _inspect(args: argparse.Namespace) -> int:
     try:
-        result = inspect_epub(args.epub, args.chapter)
+        result = inspect_epub(args.epub, args.chapter, args.all_chapters)
     except (OSError, KeyError, ValueError, zipfile.BadZipFile, ET.ParseError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
@@ -74,7 +74,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     inspect_parser = commands.add_parser("inspect", help="inspect an EPUB")
     inspect_parser.add_argument("epub", type=Path)
-    inspect_parser.add_argument("--chapter", help="TOC title substring or numbered chapter")
+    selection = inspect_parser.add_mutually_exclusive_group()
+    selection.add_argument("--chapter", help="TOC title substring or numbered chapter")
+    selection.add_argument("--all-chapters", action="store_true", help="include every numbered chapter and coverage")
     inspect_parser.add_argument("--output", type=Path, help="write JSON to this path instead of stdout")
     inspect_parser.set_defaults(handler=_inspect)
 

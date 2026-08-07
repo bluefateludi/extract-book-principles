@@ -1,4 +1,4 @@
 interface:
-  display_name: "Extract Book Principles"
-  short_description: "Build traceable book principle knowledge packages"
-  default_prompt: "Use $extract-book-principles to turn this book into a traceable principle knowledge package."
+  display_name: "Absorb Book Essence"
+  short_description: "Understand a book and turn its best ideas into action"
+  default_prompt: "Use $extract-book-principles to help me absorb this book's essence and apply its most useful ideas."

@@ -137,6 +137,41 @@ class CliTests(unittest.TestCase):
                 ["Beginning", "The first stable paragraph.", "The second stable paragraph."],
             )
 
+    def test_inspect_all_chapters_reports_complete_coverage(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            epub = temporary / "fixture.epub"
+            output = temporary / "all-chapters.json"
+            write_minimal_epub(epub)
+
+            result = run_cli("inspect", str(epub), "--all-chapters", "--output", str(output))
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            inspection = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(
+                [chapter["title"] for chapter in inspection["chapters"]],
+                ["Chapter 1 Beginning", "Chapter 2 Next"],
+            )
+            self.assertEqual(
+                inspection["coverage"],
+                {
+                    "selection": "all-numbered-chapters",
+                    "expected_chapters": 2,
+                    "processed_chapters": 2,
+                    "complete": True,
+                },
+            )
+
+    def test_inspect_rejects_conflicting_chapter_selection(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            epub = Path(directory) / "fixture.epub"
+            write_minimal_epub(epub)
+
+            result = run_cli("inspect", str(epub), "--chapter", "1", "--all-chapters")
+
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("not allowed with argument", result.stderr)
+
     def test_render_then_validate_generated_view(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             package = Path(directory) / "designing-your-life" / "zh-cn-2017-epub"
