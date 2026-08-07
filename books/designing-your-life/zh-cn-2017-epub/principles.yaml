@@ -1,5 +1,5 @@
 schema_version: "0.1"
-package_id: designing-your-life-zh-cn-2017-chapter-1
+package_id: designing-your-life-zh-cn-2017-full-book
 principles:
   - id: identify-the-right-problem-first
     title: 先确认真正的问题，再投入解决
@@ -156,4 +156,364 @@ principles:
       - 一周和单一行动是本知识包的应用改写，不是原书规定的流程
       - 涉及严重健康、安全或法律问题时应寻求专业帮助
     confidence: medium
+    review_status: reviewing
+
+  - id: align-work-and-life-views
+    title: 用工作观和人生观校准方向
+    statement: 分别写下工作为何重要与人生何以有意义，再检查身份、信念和行动是否一致，并在转折期重新校准。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 2
+        section: 创建人生的指南针
+        evidence_type: paraphrase
+        evidence_summary: 作者把工作观和人生观视为人生指南针，并用身份、信念和行动的一致性判断方向。
+        locator:
+          format: epub
+          spine_index: 12
+          doc_path: OEBPS/Text/chapter5.xhtml
+          block_start: 19
+          block_end: 29
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 2
+        section: 不要偏离正确的航线
+        evidence_type: paraphrase
+        evidence_summary: 作者建议在迷茫、重大转折或定期复盘时重新检查工作观和人生观。
+        locator:
+          format: epub
+          spine_index: 15
+          doc_path: OEBPS/Text/chapter5-3.xhtml
+          block_start: 2
+          block_end: 11
+    applications:
+      - 各用一页写下当前工作观和人生观，并标出互补、冲突和需要妥协之处
+      - 在换工作、迁居或承担新角色前重新检查选择与两种观念的一致性
+    boundaries:
+      - 一致性不是要求所有角色毫无冲突，而是让必要妥协变得清楚且可复查
+      - 工作观和人生观会变化，不应把一次书写当作永久答案
+    confidence: high
+    review_status: reviewing
+
+  - id: track-engagement-and-energy
+    title: 用投入与能量记录寻找可设计的线索
+    statement: 持续记录具体活动带来的投入程度和能量变化，通过周期性反思发现值得增加、减少或重新安排的活动。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 3
+        section: 找到你的路
+        evidence_type: paraphrase
+        evidence_summary: 作者将投入和能量定义为寻路线索，并用美好时光日志记录活动中的具体状态。
+        locator:
+          format: epub
+          spine_index: 17
+          doc_path: OEBPS/Text/chapter6-1.xhtml
+          block_start: 2
+          block_end: 4
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 3
+        section: 记录“美好时光日志”
+        evidence_type: paraphrase
+        evidence_summary: 日志由活动记录和反思组成，要求具体观察投入、能量及其变化趋势。
+        locator:
+          format: epub
+          spine_index: 21
+          doc_path: OEBPS/Text/chapter6-5.xhtml
+          block_start: 2
+          block_end: 8
+    applications:
+      - 连续两周记录关键活动、投入程度和活动前后的能量变化
+      - 每周复盘一次，挑选一个可增加、减少或改变环境的活动进行调整
+    boundaries:
+      - 短期兴奋不等于长期适合，应结合价值观、责任和持续观察判断
+      - 能量记录不是医学评估，持续疲惫或情绪异常需要专业支持
+    confidence: high
+    review_status: reviewing
+
+  - id: generate-before-judging
+    title: 先扩展选择，再延后评判
+    statement: 在陷入困境时先生成大量甚至不现实的想法，避免过早依恋第一个方案，再从更丰富的选择中形成可测试方向。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 4
+        section: 打开思路，拒绝自我设限
+        evidence_type: paraphrase
+        evidence_summary: 作者主张以数量拓宽构思空间，把延迟评判和不选择第一个方案作为设计原则。
+        locator:
+          format: epub
+          spine_index: 25
+          doc_path: OEBPS/Text/chapter7-1.xhtml
+          block_start: 9
+          block_end: 17
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 4
+        section: 制作你的思维导图
+        evidence_type: paraphrase
+        evidence_summary: 思维导图通过快速自由联想绕开自我审查，再把外围概念组合成新方向。
+        locator:
+          format: epub
+          spine_index: 26
+          doc_path: OEBPS/Text/chapter7-2.xhtml
+          block_start: 2
+          block_end: 14
+    applications:
+      - 为同一困境先写出至少十个方向，再开始筛选
+      - 以投入、能量或心流体验为中心制作思维导图并组合外围概念
+    boundaries:
+      - 延后评判只适用于构思阶段，行动前仍需评估安全、伦理、成本和可行性
+      - 想法数量不是目标本身，最终应转化为可验证的问题或原型
+    confidence: high
+    review_status: reviewing
+
+  - id: create-three-odyssey-plans
+    title: 同时设计三种可成立的五年人生
+    statement: 为未来五年设计三个彼此不同且都值得认真考虑的版本，以问题、资源、喜爱、自信和一致性打开真实选择，而不是把后两个当作退路。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 5
+        section: 畅想人生的多种可能性
+        evidence_type: paraphrase
+        evidence_summary: 作者要求并行设计三个不同且都可能成立的五年计划，以避免过早锁定单一路径。
+        locator:
+          format: epub
+          spine_index: 30
+          doc_path: OEBPS/Text/chapter8-1.xhtml
+          block_start: 2
+          block_end: 12
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 5
+        section: 奥德赛计划详解
+        evidence_type: paraphrase
+        evidence_summary: 每个计划包含时间线、标题、待探索问题，以及物力、喜爱、自信和一致性评估。
+        locator:
+          format: epub
+          spine_index: 31
+          doc_path: OEBPS/Text/chapter8-2.xhtml
+          block_start: 2
+          block_end: 18
+    applications:
+      - 分别设计当前方向延展、当前方向消失后的选择、不考虑金钱和形象时的选择
+      - 为每个版本列出两到三个未知问题，作为后续原型的研究目标
+    boundaries:
+      - 五年计划是探索草图，不是对未来的承诺或精确预测
+      - 三个版本应真正不同，但都必须尊重现实责任和不可逾越的约束
+    confidence: high
+    review_status: reviewing
+
+  - id: prototype-before-committing
+    title: 在重大投入前用真实体验获取数据
+    statement: 对感兴趣的未来先提出具体问题，再通过低成本对话或体验接触真实世界，快速获得反馈后才扩大投入。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 6
+        section: 学会提问
+        evidence_type: paraphrase
+        evidence_summary: 作者把原型定义为围绕问题创造真实体验、快速获得反馈并逐步接近未来的方法。
+        locator:
+          format: epub
+          spine_index: 35
+          doc_path: OEBPS/Text/chapter9-1.xhtml
+          block_start: 4
+          block_end: 9
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 6
+        section: 原型体验
+        evidence_type: paraphrase
+        evidence_summary: 作者建议用观摩、短项目、志愿活动或实习等体验检验自己是否喜欢真实工作内容。
+        locator:
+          format: epub
+          spine_index: 37
+          doc_path: OEBPS/Text/chapter9-3.xhtml
+          block_start: 1
+          block_end: 2
+    applications:
+      - 在转行、长期学习或创业前先安排一次从业者对话和一次短期真实体验
+      - 为原型写下要回答的问题、投入上限和结束后的复盘标准
+    boundaries:
+      - 原型用于学习而不是证明既定答案，不应只选择会支持原想法的体验
+      - 医疗、法律、安全等高风险领域的体验必须遵守专业资质和监管要求
+    confidence: high
+    review_status: reviewing
+
+  - id: understand-the-hiring-system
+    title: 按招聘系统的真实需求设计求职表达
+    statement: 先理解职位描述、筛选机制和招聘方风险，再如实突出与岗位需求匹配的证据，而不是只围绕自己的愿望陈述。
+    extraction_type: adapted
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 7
+        section: 找工作的首要原则是“适合”
+        evidence_type: paraphrase
+        evidence_summary: 作者说明简历筛选依赖岗位关键词和需求匹配，并建议集中呈现与职位有关的能力。
+        locator:
+          format: epub
+          spine_index: 41
+          doc_path: OEBPS/Text/chapter10-2.xhtml
+          block_start: 1
+          block_end: 10
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 7
+        section: 让工作更完美
+        evidence_type: synthesis
+        evidence_summary: 作者用招聘方视角重构求职，强调理解其流程与寻找合适人选的需求。
+        locator:
+          format: epub
+          spine_index: 45
+          doc_path: OEBPS/Text/chapter10-6.xhtml
+          block_start: 8
+          block_end: 12
+    applications:
+      - 为目标岗位标出核心需求，并为每项需求准备一条真实经历证据
+      - 面试前研究招聘阶段、决策角色和对方最需要降低的风险
+    boundaries:
+      - 匹配表达不等于复制关键词造假，缺少的资历和技能必须如实说明
+      - 本原则是对特定招聘环境的应用改写，不保证适用于所有国家、行业或组织
+    confidence: medium
+    review_status: reviewing
+
+  - id: explore-opportunities-through-conversations
+    title: 用求知对话进入机会网络
+    statement: 把关系网重构为向业内人士问路，通过真诚了解经历和领域来发现机会，而不是一开始就索取职位。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 8
+        section: 好工作是设计出来的
+        evidence_type: paraphrase
+        evidence_summary: 作者用人生设计采访说明，先了解故事和行业，再在恰当时机从探索转向机会讨论。
+        locator:
+          format: epub
+          spine_index: 46
+          doc_path: OEBPS/Text/chapter11.xhtml
+          block_start: 2
+          block_end: 14
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 8
+        section: 发挥人际网的作用
+        evidence_type: paraphrase
+        evidence_summary: 作者把关系网重新定义为向领域内的人咨询方向、倾听经历并逐步加入交流网络。
+        locator:
+          format: epub
+          spine_index: 47
+          doc_path: OEBPS/Text/chapter11-1.xhtml
+          block_start: 3
+          block_end: 10
+    applications:
+      - 约谈一个目标领域从业者，重点询问其经历、日常工作和进入路径
+      - 每次谈话结束时请求下一位值得了解的人或下一种可体验的场景
+    boundaries:
+      - 对话应尊重对方时间和隐私，不应伪装求知以操纵对方提供职位
+      - 网络规模不能替代能力、诚信和对实际工作的验证
+    confidence: high
+    review_status: reviewing
+
+  - id: choose-then-move-forward
+    title: 做出选择后主动放下未选路径
+    statement: 先生成并缩小选项，再综合信息和自身体验做出选择；决定之后把注意力转向如何走好已选路径，而不是反复比较未选方案。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 9
+        section: 选择四步骤
+        evidence_type: paraphrase
+        evidence_summary: 作者把选择分为生成、筛选、决定和放下四步，反对在选择后长期反刍。
+        locator:
+          format: epub
+          spine_index: 50
+          doc_path: OEBPS/Text/chapter12-1.xhtml
+          block_start: 1
+          block_end: 10
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 9
+        section: 避免过度思虑，学会放手
+        evidence_type: paraphrase
+        evidence_summary: 作者说明放手不是强迫自己遗忘其他选择，而是专注于推进已经选择的方向。
+        locator:
+          format: epub
+          spine_index: 51
+          doc_path: OEBPS/Text/chapter12-2.xhtml
+          block_start: 8
+          block_end: 16
+    applications:
+      - 为重要选择设定信息截止时间和决策日期，决定后写下下一步行动
+      - 当再次反刍未选路径时，把问题改写为如何改进当前选择
+    boundaries:
+      - 放下不等于拒绝新证据；出现重大风险或前提变化时可以重新选择
+      - 选择过程不能替代需要专业评估或利益相关者同意的决策程序
+    confidence: high
+    review_status: reviewing
+
+  - id: reframe-failures-for-learning
+    title: 区分失败类型，只提炼可行动的学习
+    statement: 记录失败并区分偶发错误、长期弱点和成长机会，把精力放在能够识别原因并改变下一次行动的失败上。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 10
+        section: 失败重构练习
+        evidence_type: paraphrase
+        evidence_summary: 作者提出记录、分类和识别成长机会三步，并区分三类失败的不同应对方式。
+        locator:
+          format: epub
+          spine_index: 55
+          doc_path: OEBPS/Text/chapter13-3.xhtml
+          block_start: 1
+          block_end: 14
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 10
+        section: 失败重构练习
+        evidence_type: paraphrase
+        evidence_summary: 作者将原型失败视为新信息和下一次设计的起点，而不是对个人价值的终局评判。
+        locator:
+          format: epub
+          spine_index: 55
+          doc_path: OEBPS/Text/chapter13-3.xhtml
+          block_start: 21
+          block_end: 24
+    applications:
+      - 每月回顾一次失败，标注类型、可控原因和下一次要改变的行为
+      - 对重复弱点设计环境、提醒或协作补偿，而不是只靠自责
+    boundaries:
+      - 重构失败不能淡化对他人造成的伤害、责任承担或必要补救
+      - 有些失败需要停止尝试或寻求专业帮助，持续试错并非总是合理
+    confidence: high
+    review_status: reviewing
+
+  - id: design-with-a-team
+    title: 把人生设计当作共同创造
+    statement: 邀请少数可信赖的人持续参与构思、反馈和原型复盘，以尊重、保密、积极参与和非评判性交流支持设计过程。
+    extraction_type: explicit
+    source_refs:
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 11
+        section: 创建团队
+        evidence_type: paraphrase
+        evidence_summary: 作者把共同创造视为人生设计的必要组成，认为机会和方向来自与他人的互动。
+        locator:
+          format: epub
+          spine_index: 56
+          doc_path: OEBPS/Text/chapter14.xhtml
+          block_start: 2
+          block_end: 12
+      - source_id: designing-your-life-zh-cn-2017-epub
+        chapter: 11
+        section: 团队角色和规则
+        evidence_type: paraphrase
+        evidence_summary: 作者给出协调者职责以及尊重、保密、积极参与和生成性四项团队规则。
+        locator:
+          format: epub
+          spine_index: 58
+          doc_path: OEBPS/Text/chapter14-2.xhtml
+          block_start: 1
+          block_end: 7
+    applications:
+      - 邀请三到五名支持者定期讨论奥德赛计划、原型结果和下一步问题
+      - 会前明确保密与非评判规则，并安排一名协调者维护时间和参与度
+    boundaries:
+      - 团队不是治疗、法律、医疗或财务专业服务的替代品
+      - 共同创造不等于由团队替本人做决定，也不要求公开所有私人信息
+    confidence: high
     review_status: reviewing

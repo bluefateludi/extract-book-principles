@@ -67,15 +67,19 @@ class MvpTests(unittest.TestCase):
         inputs = list((ROOT / "private" / "inputs").glob("*.epub"))
         if not inputs:
             self.skipTest("private EPUB is intentionally absent")
-        self.assertEqual(len(inputs), 1, "expected exactly one private MVP EPUB")
+        self.assertEqual(len(inputs), 1, "expected exactly one private source EPUB")
         epub = inputs[0]
         parser = load_parser_module()
-        parsed = parser.inspect_epub(epub, "1")
-        documents = {doc["doc_path"]: doc for doc in parsed["chapter"]["documents"]}
         principles = yaml.safe_load((PACKAGE / "principles.yaml").read_text(encoding="utf-8"))
         metadata = yaml.safe_load((PACKAGE / "metadata.yaml").read_text(encoding="utf-8"))
+        documents = {}
+        parsed = None
+        for chapter in metadata["scope"]["chapters"]:
+            parsed = parser.inspect_epub(epub, str(chapter))
+            documents.update({doc["doc_path"]: doc for doc in parsed["chapter"]["documents"]})
         digest = hashlib.sha256(epub.read_bytes()).hexdigest()
         self.assertEqual(metadata["processing"]["source_sha256"], digest)
+        assert parsed is not None
         self.assertEqual(parsed["metadata"]["identifiers"][-1], metadata["isbn"])
         for principle in principles["principles"]:
             for ref in principle["source_refs"]:
