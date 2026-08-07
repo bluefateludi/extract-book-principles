@@ -1,97 +1,51 @@
 ---
 name: extract-book-principles
-description: Help users absorb a book's essence by turning it into a concise mental model, traceable core principles, memorable takeaways, and practical next actions. Use when a user attaches or points to a book and asks to read it, extract its essence, summarize core ideas, identify mental models or lessons, apply the book to a goal, or build a reusable book knowledge package. Support EPUB with bundled deterministic inspection and preserve honest source boundaries for other formats when a suitable parser is available.
+description: Help users absorb a book's essence by reading the available source, distilling its argument and core principles, preserving honest source boundaries, and turning the result into memorable and practical guidance. Use when a user supplies or points to a book and asks to read, digest, summarize, explain, extract lessons or mental models, apply it to a goal, or create a durable book-essence.md. Work with any book format the current environment can access; use available PDF, document, terminal, OCR, or other tools rather than requiring a bundled parser.
 ---
 
-# Absorb Book Essence
+# Extract Book Principles
 
-Help the user understand, remember, and apply a book. Treat the knowledge package as the reliable internal representation, not the default user experience.
+Create one durable, reader-first `book-essence.md` that makes a book understandable, memorable, and usable. Keep file handling subordinate to comprehension.
 
-## Choose the experience
+## Set the scope
 
-Infer the mode from the request. Do not ask a setup question when the book and intent are already clear.
+1. Identify the exact book, edition, language, source format, and requested scope.
+2. Infer the desired depth. Use a concise pass for a quick explanation, a whole-book pass by default, or a goal-focused pass when the user supplies a concrete problem.
+3. State material gaps whenever the source is partial, unreadable, abridged, or not the edition claimed.
+4. Ask a question only when a missing choice would materially change the result.
 
-- Use **quick essence** for requests such as “三分钟讲懂” or “这本书讲了什么”.
-- Use **deep absorption** by default when the user asks to absorb, digest, or extract a book's essence.
-- Use **goal-focused** when the user supplies a problem, role, project, or life goal; select and adapt only the relevant ideas.
-- Use **knowledge package** when the user asks to archive, publish, compare, validate, or reuse the result with AI.
+## Read with available tools
 
-## Read the contracts
+Use the environment's suitable PDF, document, archive, terminal, browser, vision, or OCR capabilities. Choose the method from the actual source; do not require a particular parser, language runtime, or conversion pipeline.
 
-Before extracting, read [references/book-package-schema.md](references/book-package-schema.md) for provenance and [references/quality-rubric.md](references/quality-rubric.md) for claim quality. Apply these contracts internally even when delivering only a conversational digest.
+- Inspect the book's structure before synthesizing it.
+- Read the full requested scope. For long books, work section by section, retain compact notes, then reconcile them against the whole argument.
+- Preserve useful native locations such as chapter, section, page, paragraph, or e-book location when available. Do not invent precision.
+- If reliable access is impossible, explain the limit and offer a narrower result based only on material actually available.
 
-## Inspect the source
+## Protect the source
 
-1. Identify the exact file, edition, format, language, and requested scope without modifying the source.
-2. Keep copyrighted books and full-text extracts in ignored private locations. Never copy a private source into the Skill or knowledge package.
-3. For EPUB, run `scripts/parse_epub.py` to inspect metadata, TOC, spine, and selected chapters. Bind locators to the registered file hash.
-4. For PDF, DOCX, Markdown, TXT, HTML, or OCR PDF, use a suitable parser available in the environment. Preserve native page, section, paragraph, or OCR coordinates when possible. If reliable parsing is unavailable, explain the limitation instead of inventing support.
-5. Inspect the whole structure before selecting chapters. State omitted front matter, appendices, or unreadable sections.
+- Treat copyrighted books and full-text derivatives as private inputs. Never copy them into the Skill, a public repository, or the deliverable.
+- Do not move, rename, modify, or delete the user's source unless explicitly requested.
+- Prefer paraphrase. Include only necessary short quotations, attribute them, and never reproduce enough text to substitute for the book.
+- Distinguish the author's claims from AI inference, adaptation, outside knowledge, and the user's own interpretation.
 
-For EPUB in an installed project checkout:
+## Extract the essence
 
-```bash
-python -m book_principles inspect private/inputs/book.epub --output private/epub-map.json
-python -m book_principles inspect private/inputs/book.epub --chapter 1 --output private/chapter-1.json
-```
+1. Express the central problem, the author's answer, and the argument path.
+2. Build a compact thought map showing how the major ideas support, constrain, or lead to one another.
+3. Surface the few highlights a reader should notice before presenting detail.
+4. Select the smallest set of non-overlapping principles that explains most of the book. Do not turn every chapter heading into a principle.
+5. For each principle, explain the claim, why it matters, its source location, and its most important boundary or failure mode.
+6. Convert the ideas into low-risk, observable practices. Tailor them to the user's goal without presenting the adaptation as the author's words.
+7. Write a few "AI memory sentences": compact recall cues that preserve the book's causal logic, not slogans detached from context.
 
-For a source checkout without installation, use `scripts/parse_epub.py`.
+## Create the deliverable
 
-## Extract in layers
+Read [references/book-essence-template.md](references/book-essence-template.md) before writing. Create a single `book-essence.md` by default when the user asks for a saved artifact; otherwise use the same structure in the response. Put it in the user-specified destination or a sensible workspace location and report the path.
 
-1. Map the book's central problem, answer, argument path, and chapter roles.
-2. Read the selected scope chapter by chapter. Track recurring claims, contrasts, mechanisms, exercises, and qualifications.
-3. Select the smallest set of principles that explains most of the book. Merge duplicates and avoid turning every chapter heading into a principle.
-4. Classify each principle honestly:
-   - `explicit`: the author states the rule or recommendation directly.
-   - `inferred`: the principle synthesizes multiple passages.
-   - `adapted`: the application extends the source; label the extension as Codex's adaptation.
-   - `external`: the claim comes from a separately registered non-book source.
-5. Give every principle a concise statement, why it matters, an application, a misuse boundary, confidence, and source evidence.
-6. Prefer paraphrases. Use a short quote only when exact wording is necessary, and never reproduce long passages or a chapter substitute.
+Keep technical details out of the main reading experience. Include parsing, OCR, hashes, conversion notes, or machine-oriented locators only when the user requests an audit trail or when a limitation depends on them.
 
-## Deliver the essence
+## Check quality
 
-Lead with reader value, not files, schemas, or processing details. Adapt depth to the request while preserving this order:
-
-1. **一句话精华** — the book's central idea in one sentence.
-2. **三分钟掌握** — the problem, proposed answer, and reasoning chain in a compact explanation.
-3. **核心原则** — usually 7–15 non-overlapping principles. For each, explain what it means, why it works, how to use it, and where it stops applying.
-4. **把书用起来** — three to seven concrete actions or experiments, tailored to the user's goal when one is known.
-5. **记住这些就够了** — a compact recall list or mental model.
-6. **范围与可信度** — identify the edition and scope, distinguish author claims from inference or adaptation, and disclose gaps.
-
-Do not dump YAML or raw parser output into the response. Cite human-readable chapters or sections near important claims; provide technical locators only when the user requests audit details or when creating files.
-
-## Personalize without distorting
-
-- When the user gives a goal, select relevant principles before generating advice.
-- Separate “the author argues” from “applied to your situation, a useful experiment is”.
-- Turn advice into low-risk, observable actions rather than generic motivation.
-- Preserve meaningful counterexamples and failure conditions.
-- Ask at most one follow-up question after delivering initial value when personalization would materially improve the next pass.
-
-## Build a reusable package when needed
-
-Create `books/<book-id>/<edition-id>/` only when the user requests files, the workspace already maintains book packages, or future comparison and reuse matter.
-
-1. Register the edition and hash in `metadata.yaml` and `sources.yaml`.
-2. Write `book-map.md` and `summary.md` as authored reading views.
-3. Store principles only in `principles.yaml`; generate `principles.md` from it.
-4. Keep AI-created work at `draft` or `reviewing`. Use `verified` only after a human checks the registered source.
-5. Validate, render, and check generated-file freshness:
-
-```bash
-python -m book_principles render books/<book-id>/<edition-id>
-python -m book_principles validate books/<book-id>/<edition-id> --check-generated
-```
-
-Without installation, use `scripts/validate_book_package.py` with `--render` or `--check-generated`.
-
-## Review before delivery
-
-- Ensure the digest reflects the processed scope rather than the title or table of contents alone.
-- Resolve important claims to the exact edition and stable source location.
-- Remove repetition, decorative quotations, unsupported certainty, and generic advice.
-- Make the result useful to a reader who will not open the YAML files.
-- Keep private books and derived full-text extracts outside version control.
+Read [references/quality-checklist.md](references/quality-checklist.md) and complete the checks before delivery. Keep AI-only work labeled as unverified where exact source claims have not been manually checked. Never imply whole-book coverage from a table of contents, excerpt, summary, or selected chapters.

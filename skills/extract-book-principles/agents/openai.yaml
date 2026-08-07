@@ -1,4 +1,4 @@
 interface:
-  display_name: "Absorb Book Essence"
-  short_description: "Understand a book and turn its best ideas into action"
-  default_prompt: "Use $extract-book-principles to help me absorb this book's essence and apply its most useful ideas."
+  display_name: "Extract Book Principles"
+  short_description: "Turn a book into memorable, practical principles"
+  default_prompt: "Use $extract-book-principles to read this book and create a durable book-essence.md."
