@@ -32,12 +32,14 @@ Keep copyrighted source files in an ignored private input directory. Do not copy
 
 ## Parse an EPUB
 
-Run:
+From an installed checkout, run:
 
 ```bash
-python scripts/parse_epub.py /private/path/book.epub --output /private/path/epub-map.json
-python scripts/parse_epub.py /private/path/book.epub --chapter 1 --output /private/path/chapter-1.json
+python -m book_principles inspect private/inputs/book.epub --output private/epub-map.json
+python -m book_principles inspect private/inputs/book.epub --chapter 1 --output private/chapter-1.json
 ```
+
+Without installing the package, use the repository compatibility entry point at `skills/extract-book-principles/scripts/parse_epub.py`.
 
 Inspect metadata, TOC, and spine before selecting scope. Treat numbered chapter selection as the chapter heading plus following subsections up to the next numbered chapter. Verify ambiguous TOCs manually.
 
@@ -63,9 +65,11 @@ Create `books/<book-id>/<edition-id>/` with the files required by the schema.
 Run validation, generation, then a stale-output check:
 
 ```bash
-python scripts/validate_book_package.py books/<book-id>/<edition-id> --render
-python scripts/validate_book_package.py books/<book-id>/<edition-id> --check-generated
+python -m book_principles render books/<book-id>/<edition-id>
+python -m book_principles validate books/<book-id>/<edition-id> --check-generated
 ```
+
+Without installing the package, use `skills/extract-book-principles/scripts/validate_book_package.py` with the legacy `--render` or `--check-generated` flags.
 
 Fix every error. Review the generated Markdown for clarity, provenance labels, and boundaries. Never edit `principles.md` directly.
 

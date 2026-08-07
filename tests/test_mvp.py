@@ -43,7 +43,7 @@ class MvpTests(unittest.TestCase):
 
     def test_module_cli_render_preserves_sample_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            package = Path(directory) / "package"
+            package = Path(directory) / "designing-your-life" / "zh-cn-2017-epub"
             shutil.copytree(PACKAGE, package)
             generated = package / "principles.md"
             expected = generated.read_text(encoding="utf-8")

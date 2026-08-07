@@ -3,6 +3,14 @@
 
 # Copyrighted/private source books used only for local testing.
 private/
+*.epub
+*.mobi
+*.azw
+*.azw3
+
+# EPUB inspection output may contain complete chapter text.
+epub-map*.json
+chapter-*.json
 
 __pycache__/
 *.py[cod]

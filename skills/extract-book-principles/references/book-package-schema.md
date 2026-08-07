@@ -50,7 +50,10 @@ processing:
   status: reviewing
   extractor: extract-book-principles/0.1
   extracted_at: "2026-08-07"
+  source_sha256: <64 lowercase hex characters>
 ```
+
+The metadata identity fields must match the single primary book entry in `sources.yaml`. The package directory names must match `book_id` and `edition_id`. Use `human_reviewed: true` only after a person checks the registered source; principles cannot be marked `verified` or `published` without it.
 
 Allow `source_format`: `epub`, `pdf`, `docx`, `markdown`, `txt`, `html`, `ocr-pdf`. Keep format-specific parsing details under `processing` or a source entry.
 
@@ -77,6 +80,8 @@ sources:
 ```
 
 Register an independent source before using `external`. Do not register project inspirations as principle evidence unless they actually supply the claim.
+
+Keep the primary book's title, authors, language, publisher, publication date, ISBN, format, and SHA-256 synchronized with `metadata.yaml`. For EPUB, require `locator_scheme: epub-block-v1`.
 
 ## Principles
 

@@ -15,11 +15,14 @@ except ImportError:  # pragma: no cover - environment error
 
 
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+SCHEMA_VERSION = "0.1"
 EXTRACTION_TYPES = {"explicit", "inferred", "adapted", "external"}
 CONFIDENCE = {"low", "medium", "high"}
 REVIEW_STATUS = {"draft", "reviewing", "verified", "published"}
 EVIDENCE_TYPES = {"paraphrase", "short_quote", "synthesis"}
 REQUIRED_FILES = {"metadata.yaml", "sources.yaml", "book-map.md", "summary.md", "principles.yaml"}
+SOURCE_FORMATS = {"epub", "pdf", "docx", "markdown", "txt", "html", "ocr-pdf"}
 
 
 def load_yaml(path: Path):
@@ -83,6 +86,15 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
     if errors:
         return errors, metadata, principles_doc
 
+    versions = {
+        "metadata.yaml": metadata.get("schema_version"),
+        "sources.yaml": sources_doc.get("schema_version"),
+        "principles.yaml": principles_doc.get("schema_version"),
+    }
+    for document_name, version in versions.items():
+        if version != SCHEMA_VERSION:
+            errors.append(f"{document_name}: unsupported schema_version: {version}")
+
     for field in ("schema_version", "package_id", "book_id", "edition_id", "title", "authors", "language", "source_format", "scope", "processing"):
         if not metadata.get(field):
             errors.append(f"metadata.yaml: missing {field}")
@@ -90,14 +102,32 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
         value = metadata.get(field, "")
         if value and not ID_PATTERN.fullmatch(str(value)):
             errors.append(f"metadata.yaml: invalid {field}: {value}")
-    if metadata.get("source_format") not in {"epub", "pdf", "docx", "markdown", "txt", "html", "ocr-pdf"}:
+    if metadata.get("source_format") not in SOURCE_FORMATS:
         errors.append("metadata.yaml: unsupported source_format")
+    if package.name != metadata.get("edition_id"):
+        errors.append("metadata.yaml: edition_id does not match package directory")
+    if package.parent.name != metadata.get("book_id"):
+        errors.append("metadata.yaml: book_id does not match package directory")
+    authors = metadata.get("authors")
+    if not isinstance(authors, list) or not authors or not all(isinstance(value, str) and value.strip() for value in authors):
+        errors.append("metadata.yaml: authors must be a non-empty string list")
+    scope = metadata.get("scope")
+    if not isinstance(scope, dict) or not scope.get("type") or not scope.get("label"):
+        errors.append("metadata.yaml: scope must include type and label")
+    processing = metadata.get("processing")
+    if not isinstance(processing, dict):
+        errors.append("metadata.yaml: processing must be a mapping")
+        processing = {}
+    source_sha256 = processing.get("source_sha256", "")
+    if not isinstance(source_sha256, str) or not SHA256_PATTERN.fullmatch(source_sha256):
+        errors.append("metadata.yaml: processing.source_sha256 must be 64 lowercase hex characters")
 
     sources = sources_doc.get("sources", [])
     if not isinstance(sources, list) or not sources:
         errors.append("sources.yaml: sources must be a non-empty list")
         sources = []
     source_ids: set[str] = set()
+    sources_by_id: dict[str, dict] = {}
     for index, source in enumerate(sources):
         prefix = f"sources.yaml: sources[{index}]"
         if not isinstance(source, dict):
@@ -112,6 +142,38 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
         if source_id and not ID_PATTERN.fullmatch(str(source_id)):
             errors.append(f"{prefix} invalid id: {source_id}")
         source_ids.add(source_id)
+        if source_id:
+            sources_by_id[str(source_id)] = source
+        source_format = source.get("format")
+        if source_format not in SOURCE_FORMATS:
+            errors.append(f"{prefix} invalid format: {source_format}")
+        digest = source.get("sha256")
+        if digest is not None and (not isinstance(digest, str) or not SHA256_PATTERN.fullmatch(digest)):
+            errors.append(f"{prefix} sha256 must be 64 lowercase hex characters")
+
+    primary_sources = [
+        source for source in sources if isinstance(source, dict) and source.get("type") == "book" and source.get("role") == "primary"
+    ]
+    if len(primary_sources) != 1:
+        errors.append("sources.yaml: expected exactly one primary book source")
+    else:
+        primary = primary_sources[0]
+        comparisons = {
+            "title": "title",
+            "authors": "authors",
+            "language": "language",
+            "publisher": "publisher",
+            "publication_date": "publication_date",
+            "isbn": "isbn",
+            "source_format": "format",
+        }
+        for metadata_field, source_field in comparisons.items():
+            if metadata.get(metadata_field) != primary.get(source_field):
+                errors.append(f"metadata.yaml: {metadata_field} does not match primary source")
+        if source_sha256 != primary.get("sha256"):
+            errors.append("metadata.yaml: processing.source_sha256 does not match primary source")
+        if metadata.get("source_format") == "epub" and primary.get("locator_scheme") != "epub-block-v1":
+            errors.append("sources.yaml: primary EPUB must use locator_scheme epub-block-v1")
 
     if principles_doc.get("package_id") != metadata.get("package_id"):
         errors.append("principles.yaml: package_id does not match metadata.yaml")
@@ -140,6 +202,8 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
             errors.append(f"{prefix} invalid confidence")
         if item.get("review_status") not in REVIEW_STATUS:
             errors.append(f"{prefix} invalid review_status")
+        if item.get("review_status") in {"verified", "published"} and processing.get("human_reviewed") is not True:
+            errors.append(f"{prefix} verified or published content requires processing.human_reviewed: true")
         for list_field in ("applications", "boundaries"):
             if not isinstance(item.get(list_field), list) or not all(isinstance(value, str) and value.strip() for value in item.get(list_field, [])):
                 errors.append(f"{prefix} {list_field} must be a non-empty string list")
@@ -154,6 +218,7 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
                 continue
             if ref.get("source_id") not in source_ids:
                 errors.append(f"{ref_prefix} unknown source_id: {ref.get('source_id')}")
+            referenced_source = sources_by_id.get(str(ref.get("source_id")), {})
             for field in ("chapter", "section", "evidence_type", "evidence_summary", "locator"):
                 if ref.get(field) in (None, "", {}):
                     errors.append(f"{ref_prefix} missing {field}")
@@ -166,11 +231,18 @@ def validate(package: Path) -> tuple[list[str], dict | None, dict | None]:
             for field in ("format", "spine_index", "doc_path", "block_start"):
                 if locator.get(field) in (None, ""):
                     errors.append(f"{ref_prefix} locator missing {field}")
-            if locator.get("format") != "epub":
-                errors.append(f"{ref_prefix} MVP locator format must be epub")
-            start, end = locator.get("block_start"), locator.get("block_end", locator.get("block_start"))
-            if not isinstance(start, int) or start < 1 or not isinstance(end, int) or end < start:
-                errors.append(f"{ref_prefix} invalid block range")
+            if referenced_source and locator.get("format") != referenced_source.get("format"):
+                errors.append(f"{ref_prefix} locator format does not match source format")
+            if locator.get("format") == "epub":
+                start, end = locator.get("block_start"), locator.get("block_end", locator.get("block_start"))
+                if not isinstance(start, int) or start < 1 or not isinstance(end, int) or end < start:
+                    errors.append(f"{ref_prefix} invalid block range")
+            else:
+                errors.append(f"{ref_prefix} MVP supports only epub locators")
+        if item.get("extraction_type") == "external":
+            referenced = [sources_by_id.get(str(ref.get("source_id")), {}) for ref in refs if isinstance(ref, dict)]
+            if not any(source.get("type") != "book" for source in referenced):
+                errors.append(f"{prefix} external principle must reference a non-book source")
     return errors, metadata, principles_doc
 
 

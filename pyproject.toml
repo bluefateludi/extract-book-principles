@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "book-principles"
 version = "0.1.0"
 description = "Core tools for inspecting EPUBs and validating book knowledge packages"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["PyYAML>=6"]
 

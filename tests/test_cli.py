@@ -16,15 +16,12 @@ SAMPLE_PACKAGE = ROOT / "books" / "designing-your-life" / "zh-cn-2017-epub"
 
 
 def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
-    """Exercise only the public module entry point in a child process."""
+    """Exercise the installed public module entry point outside the checkout."""
     env = os.environ.copy()
-    source_path = str(ROOT / "src")
-    env["PYTHONPATH"] = os.pathsep.join(
-        part for part in (source_path, env.get("PYTHONPATH", "")) if part
-    )
+    env.pop("PYTHONPATH", None)
     return subprocess.run(
         [sys.executable, "-m", "book_principles", *args],
-        cwd=ROOT,
+        cwd=tempfile.gettempdir(),
         env=env,
         capture_output=True,
         text=True,
@@ -95,6 +92,24 @@ def write_minimal_epub(path: Path) -> None:
 
 
 class CliTests(unittest.TestCase):
+    def test_module_and_console_help_identify_the_entry_point(self) -> None:
+        module = run_cli("--help")
+        self.assertEqual(module.returncode, 0, module.stdout + module.stderr)
+        self.assertTrue(module.stdout.startswith("usage: python -m book_principles"))
+
+        executable = Path(sys.executable).parent / "book-principles"
+        self.assertTrue(executable.is_file(), "installed console script is unavailable")
+        console = subprocess.run(
+            [str(executable), "--help"],
+            cwd=tempfile.gettempdir(),
+            env={key: value for key, value in os.environ.items() if key != "PYTHONPATH"},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(console.returncode, 0, console.stdout + console.stderr)
+        self.assertTrue(console.stdout.startswith("usage: book-principles"))
+
     def test_inspect_writes_metadata_and_selected_chapter(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
@@ -124,7 +139,7 @@ class CliTests(unittest.TestCase):
 
     def test_render_then_validate_generated_view(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            package = Path(directory) / "package"
+            package = Path(directory) / "designing-your-life" / "zh-cn-2017-epub"
             shutil.copytree(SAMPLE_PACKAGE, package)
             (package / "principles.md").unlink()
 

@@ -67,7 +67,9 @@ def _render(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="python -m book_principles", description=__doc__)
+    executable = Path(sys.argv[0]).name
+    program = "book-principles" if executable.startswith("book-principles") else "python -m book_principles"
+    parser = argparse.ArgumentParser(prog=program, description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
 
     inspect_parser = commands.add_parser("inspect", help="inspect an EPUB")
