@@ -1,0 +1,4 @@
+interface:
+  display_name: "Extract Book Principles"
+  short_description: "Build traceable book principle knowledge packages"
+  default_prompt: "Use $extract-book-principles to turn this book into a traceable principle knowledge package."

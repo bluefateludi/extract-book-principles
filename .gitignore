@@ -1,0 +1,8 @@
+.DS_Store
+**/.DS_Store
+
+# Copyrighted/private source books used only for local testing.
+private/
+
+__pycache__/
+*.py[cod]
