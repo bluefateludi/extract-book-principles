@@ -1,5 +1,7 @@
 .DS_Store
 **/.DS_Store
+__pycache__/
+*.py[cod]
 
 # Copyrighted source books and full-text working material.
 private/
