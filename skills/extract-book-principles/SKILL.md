@@ -1,91 +1,51 @@
 ---
 name: extract-book-principles
-description: Extract traceable, actionable principles from books into a versioned knowledge package with one YAML fact source and generated human-readable views. Use when Codex needs to inspect an EPUB, map a book or chapter, summarize it without reproducing long copyrighted passages, distinguish explicit, inferred, adapted, and external claims, create stable source locators, validate a book package, or prepare future PDF, DOCX, Markdown, TXT, HTML, or OCR-PDF ingestion.
+description: Help users absorb a book's essence by reading the available source, distilling its argument and core principles, preserving honest source boundaries, and turning the result into memorable and practical guidance. Use when a user supplies or points to a book and asks to read, digest, summarize, explain, extract lessons or mental models, apply it to a goal, or create a durable book-essence.md. Work with any book format the current environment can access; use available PDF, document, terminal, OCR, or other tools rather than requiring a bundled parser.
 ---
 
 # Extract Book Principles
 
-Build a knowledge package for both humans and AI. Keep `principles.yaml` as the only fact source for principles; generate `principles.md` from it.
+Create one durable, reader-first `book-essence.md` that makes a book understandable, memorable, and usable. Keep file handling subordinate to comprehension.
 
-## Read the contracts
+## Set the scope
 
-Read [references/book-package-schema.md](references/book-package-schema.md) before creating or changing a package. Read [references/quality-rubric.md](references/quality-rubric.md) before extracting principles and during final review.
+1. Identify the exact book, edition, language, source format, and requested scope.
+2. Infer the desired depth. Use a concise pass for a quick explanation, a whole-book pass by default, or a goal-focused pass when the user supplies a concrete problem.
+3. State material gaps whenever the source is partial, unreadable, abridged, or not the edition claimed.
+4. Ask a question only when a missing choice would materially change the result.
 
-## Route the input
+## Read with available tools
 
-1. Detect the source format without modifying the original.
-2. For EPUB, use `scripts/parse_epub.py`; treat its document path, spine index, and block number as stable within the registered file hash.
-3. For PDF, DOCX, Markdown, TXT, HTML, or OCR PDF, stop before extraction unless a suitable parser is available. Preserve the same normalized output concepts: metadata, ordered sections, text blocks, and format-specific locators. Record `source_format` as `pdf`, `docx`, `markdown`, `txt`, `html`, or `ocr-pdf`.
-4. For OCR PDF, preserve page image number, OCR engine/version, and text-block coordinates or IDs. Never present OCR text as exact evidence without checking it.
+Use the environment's suitable PDF, document, archive, terminal, browser, vision, or OCR capabilities. Choose the method from the actual source; do not require a particular parser, language runtime, or conversion pipeline.
 
-Do not add unsupported format code merely to satisfy routing. Add a parser only when a real input requires it.
+- Inspect the book's structure before synthesizing it.
+- Read the full requested scope. For long books, work section by section, retain compact notes, then reconcile them against the whole argument.
+- Preserve useful native locations such as chapter, section, page, paragraph, or e-book location when available. Do not invent precision.
+- If reliable access is impossible, explain the limit and offer a narrower result based only on material actually available.
 
-## Register provenance
+## Protect the source
 
-Maintain three distinct layers:
+- Treat copyrighted books and full-text derivatives as private inputs. Never copy them into the Skill, a public repository, or the deliverable.
+- Do not move, rename, modify, or delete the user's source unless explicitly requested.
+- Prefer paraphrase. Include only necessary short quotations, attribute them, and never reproduce enough text to substitute for the book.
+- Distinguish the author's claims from AI inference, adaptation, outside knowledge, and the user's own interpretation.
 
-1. Record method and implementation influences in project documentation, never as proof of a book principle.
-2. Register the exact book edition and input hash in `metadata.yaml` and `sources.yaml`.
-3. Give every principle one or more source references with a format-specific stable locator.
+## Extract the essence
 
-Keep copyrighted source files in an ignored private input directory. Do not copy long passages into committed artifacts. Prefer a concise evidence summary; use only a necessary short quote when exact wording matters.
+1. Express the central problem, the author's answer, and the argument path.
+2. Build a compact thought map showing how the major ideas support, constrain, or lead to one another.
+3. Surface the few highlights a reader should notice before presenting detail.
+4. Select the smallest set of non-overlapping principles that explains most of the book. Do not turn every chapter heading into a principle.
+5. For each principle, explain the claim, why it matters, its source location, and its most important boundary or failure mode.
+6. Convert the ideas into low-risk, observable practices. Tailor them to the user's goal without presenting the adaptation as the author's words.
+7. Write a few "AI memory sentences": compact recall cues that preserve the book's causal logic, not slogans detached from context.
 
-## Parse an EPUB
+## Create the deliverable
 
-From an installed checkout, run:
+Read [references/book-essence-template.md](references/book-essence-template.md) before writing. Create a single `book-essence.md` by default when the user asks for a saved artifact; otherwise use the same structure in the response. Put it in the user-specified destination or a sensible workspace location and report the path.
 
-```bash
-python -m book_principles inspect private/inputs/book.epub --output private/epub-map.json
-python -m book_principles inspect private/inputs/book.epub --chapter 1 --output private/chapter-1.json
-```
+Keep technical details out of the main reading experience. Include parsing, OCR, hashes, conversion notes, or machine-oriented locators only when the user requests an audit trail or when a limitation depends on them.
 
-Without installing the package, use the repository compatibility entry point at `skills/extract-book-principles/scripts/parse_epub.py`.
+## Check quality
 
-Inspect metadata, TOC, and spine before selecting scope. Treat numbered chapter selection as the chapter heading plus following subsections up to the next numbered chapter. Verify ambiguous TOCs manually.
-
-## Build the package
-
-Create `books/<book-id>/<edition-id>/` with the files required by the schema.
-
-1. Fix the scope and version. Use a new edition ID when pagination, document paths, or content changes.
-2. Write `metadata.yaml` and `sources.yaml` before analysis.
-3. Write `book-map.md` as the structure and argument path for the processed scope.
-4. Write `summary.md` as a concise synthesis, not a replacement copy of the source.
-5. Write candidate principles only in `principles.yaml`.
-6. Label each principle:
-   - `explicit`: the source states the rule or recommendation directly.
-   - `inferred`: synthesize a recurring claim from multiple passages.
-   - `adapted`: turn source material into a new application; do not attribute the extension verbatim to the author.
-   - `external`: derive from a separately registered non-book source.
-7. Add stable ID, statement, applications, boundaries, confidence, review status, and evidence locators.
-8. Keep AI-created work at `draft` or `reviewing`; use `verified` only after a human checks the registered source.
-
-## Validate and generate views
-
-Run validation, generation, then a stale-output check:
-
-```bash
-python -m book_principles render books/<book-id>/<edition-id>
-python -m book_principles validate books/<book-id>/<edition-id> --check-generated
-```
-
-Without installing the package, use `skills/extract-book-principles/scripts/validate_book_package.py` with the legacy `--render` or `--check-generated` flags.
-
-Fix every error. Review the generated Markdown for clarity, provenance labels, and boundaries. Never edit `principles.md` directly.
-
-Also run the Skill Creator validator after changing this skill:
-
-```bash
-python /path/to/skill-creator/scripts/quick_validate.py skills/extract-book-principles
-```
-
-## Review before delivery
-
-Confirm all of the following:
-
-- Preserve one fact source and two reading views.
-- Resolve every source reference to a registered source and exact edition.
-- Use EPUB chapter, section, spine/document path, and block location when page numbers are unstable.
-- Avoid unsupported certainty and mark inference or adaptation honestly.
-- State scope gaps and incomplete chapters.
-- Keep private books and derived full-text extracts outside version control.
+Read [references/quality-checklist.md](references/quality-checklist.md) and complete the checks before delivery. Keep AI-only work labeled as unverified where exact source claims have not been manually checked. Never imply whole-book coverage from a table of contents, excerpt, summary, or selected chapters.

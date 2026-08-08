@@ -1,16 +1,12 @@
 .DS_Store
 **/.DS_Store
+__pycache__/
+*.py[cod]
 
-# Copyrighted/private source books used only for local testing.
+# Copyrighted source books and full-text working material.
 private/
 *.epub
 *.mobi
 *.azw
 *.azw3
-
-# EPUB inspection output may contain complete chapter text.
-epub-map*.json
-chapter-*.json
-
-__pycache__/
-*.py[cod]
+extracted-full-text/

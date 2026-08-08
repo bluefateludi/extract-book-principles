@@ -1,97 +1,127 @@
 # extract-book-principles
 
-从书籍中提炼核心内容与可执行原则，将阅读转化为可理解、可追溯、可应用的行动指南。
+把用户提供的一本书变成一份可信、可记忆、可实践的 `book-essence.md`。
 
-## 项目目标
+`extract-book-principles` 是一个独立的 Codex Skill。调用 Skill 的 AI 会基于实际读到的内容梳理全书论证、提炼关键原则、标明来源边界，并在用户要求保存时默认交付一份 `book-essence.md`。
 
-本项目同时服务人类读者与 AI：
+## 60 秒上手
 
-1. 构建通用的书籍原则提炼 Skill，规范书籍解析、内容总结、原则提炼和质量检查流程。
-2. 为每本书生成标准化知识包，既方便人类阅读，也方便 AI 检索、验证和应用。
-3. 按需将高价值知识包发布为独立的书籍 Skill。
+1. **发现 Skill。** 在 Codex 中从本仓库或其子目录开始工作，Codex 会扫描从当前工作目录（CWD）到仓库根目录链路上的 `.agents/skills`。本仓库通过 `$REPO_ROOT/.agents/skills/extract-book-principles` 软链接暴露实际 Skill，官方支持这种软链接方式。用户级本地使用时，将完整 Skill 文件夹放在 `$HOME/.agents/skills/extract-book-principles`。
+2. **提供书籍。** 将你有权访问的书附加到任务，或给出当前环境可访问的文件路径；最好同时说明书名、版次、语言、希望覆盖的范围和使用目标。
+3. **调用 Skill。** 在 Codex CLI 或 IDE 扩展中运行 `/skills` 选择它，或输入 `$` 并选择 `extract-book-principles`。在 ChatGPT desktop 中，可从侧边栏的 Skills 查看项目里的 Skills。
+4. **复制这条提示。**
 
-## 当前结构
+   ```text
+   使用 $extract-book-principles 完整阅读我提供的书，生成一份 book-essence.md；标明实际阅读范围，并区分作者观点与 AI 应用建议。
+   ```
+
+5. **接收产物。** 如果你指定了目标目录，文件会写到那里；否则调用 Skill 的 AI 会选择合理的工作区位置并报告路径。默认只生成一份 `book-essence.md`。
+
+安装、发现和调用方式以 [OpenAI 官方 Build skills 文档](https://learn.chatgpt.com/docs/build-skills) 为准。Codex 会自动检测 Skill 变化；若更新没有出现，可重启 Codex。
+
+## 你会得到什么
+
+| 部分 | 作用 |
+| --- | --- |
+| 核心主旨 | 用一句话说明全书要解决的问题和作者的核心答案 |
+| 思想地图 | 展示关键判断、方法、约束和结果之间的关系 |
+| 重点 | 提前指出最值得注意的洞见、机制或转折 |
+| 核心原则 | 选择少量、不重叠且能解释全书的原则，并说明依据与边界 |
+| 必要短引 | 只保留无法由转述替代的少量短引，并注明位置 |
+| AI 记忆句 | 用便于复述的句子保留全书的因果逻辑 |
+| 误用边界 | 指出原则的失效条件、常见误解和高风险用法 |
+| 把书用起来 | 将原则转成低风险、可观察的行动或实验 |
+| 范围与可信度 | 记录版次、实际阅读范围、材料缺口和核验状态 |
+
+这份文件面向读者，而不是机器中间格式。篇幅会随书籍、材料完整度和用户目标调整，但来源限制不会被隐藏。
+
+## 好提示词示例
+
+- **快速精华：** `使用 $extract-book-principles 快速解释这本书最重要的主旨和原则；先说明你实际能读到的范围，不需要逐章摘要。`
+- **完整阅读：** `使用 $extract-book-principles 完整阅读这本书，核对章节覆盖后生成一份 book-essence.md，保留可靠位置并标注未人工核验的内容。`
+- **目标导向：** `使用 $extract-book-principles 提炼这本书，并重点帮助我改进团队决策；把作者原意、AI 归纳和面向我目标的建议分开标注。`
+
+## 完整读书工作流
+
+调用 Skill 的 AI 会根据任务深度调整做法；完整阅读通常包含以下阶段：
+
+1. **确认版本与范围。** 识别书名、作者、版次、语言、文件格式和用户要求；材料不完整时先限定结论范围。
+2. **选择环境工具并阅读。** 检查全书结构，再使用当前环境可用的 PDF、文档、终端、视觉或 OCR 能力处理实际来源。
+3. **分段记录与覆盖检查。** 对长书按章节或部分保留紧凑笔记，追踪已读与未读内容，避免把目录、节选或模型记忆当成全书。
+4. **做全书综合。** 将局部笔记重新放回全书论证，提炼中心问题、作者答案、思想地图和少量核心原则。
+5. **完成质量审查。** 检查来源定位、原则边界、短引长度、AI 推断标记、实践风险以及覆盖声明是否诚实。
+6. **单文件交付。** 将结果整理为一份连贯的 `book-essence.md`，写入约定位置并报告路径。
+
+完整阅读不等于逐段复述。目标是覆盖用户要求的原始材料并理解其整体论证，而不是制造可以替代原书的压缩全文。
+
+## 定位、适用场景与非目标
+
+本仓库交付一个独立的、仓库范围的 Skill；`books/` 只保留一份输出示例。它适合制作长期可回顾的读书精华、建立阅读前的思想地图、核对一本书的主要论证，或将书中原则谨慎应用到具体目标。
+
+它不提供 Python 工具包、固定解析器或格式转换管线，也不建设读书 App、Wiki、内容数据库、缓存系统、内容平台或通用框架。一次任务可以临时使用环境已有工具辅助阅读，但这些工具不是本项目的产品组成。
+
+当前目录用于本地编写和仓库级发现。若未来要让其他人通过统一目录安装，或将 Skill 与连接器一起分发，可按官方文档另行封装为 plugin；本仓库现在不创建 plugin，也不扩展为多个 Skills。
+
+## AI 如何选择读取工具
+
+Skill 不预设书籍格式或运行时。调用 Skill 的 AI 会从实际来源和当前环境选择合适能力：
+
+- PDF：使用可用的文本提取、页面渲染或视觉检查能力；
+- 文档：使用相应文档读取能力，并尽量保留章节、页码等原生位置；
+- 文本或环境可访问的归档：使用终端能力检查结构并按合理单元阅读；
+- 扫描件或图像型页面：在可用时使用视觉或 OCR，并说明识别质量带来的不确定性。
+
+如果无法可靠读取完整范围，产物会缩小声称的覆盖范围，而不会补写未读部分或伪造精确位置。
+
+## 版权与隐私边界
+
+- 只处理用户有权访问且明确提供的书；不绕过权限、付费墙或数字权利保护。
+- 原书及可还原全文的中间产物属于私密输入，不复制进 Skill、公开仓库或最终笔记。
+- 优先转述，只保留必要、简短且注明来源的引文；`book-essence.md` 不应成为原书替代品。
+- 默认不移动、重命名、修改或删除用户的原书。必要中间文件应留在不纳入版本控制的私密位置。
+- `.gitignore` 排除常见原书格式、`private/` 和全文提取目录，但提交前仍需人工确认差异中没有原书或全文衍生物。
+
+## 仓库结构
 
 ```text
-src/book_principles/       # 确定性的 EPUB、校验和渲染工具包
-skills/                    # 通用书籍原则提炼 Skill 源目录
-.agents/skills/            # Codex 仓库级 Skill 发现入口
-books/                     # 每本书的标准化知识包
-tests/                     # 结构与质量验证
+.
+├── .agents/skills/extract-book-principles  # 仓库级发现入口（软链接）
+├── .gitignore
+├── README.md
+├── books/
+│   └── designing-your-life/             # 一份输出示例，不含原书
+└── skills/extract-book-principles/
+    ├── SKILL.md                            # AI 执行时加载的核心指令
+    ├── agents/openai.yaml                 # Skill 的界面元数据
+    └── references/
+        ├── book-essence-template.md        # 默认产物结构
+        └── quality-checklist.md            # 交付前检查表
 ```
 
-项目采用“Python 工具包 + Skill + 知识包”分层：工具包执行确定性操作，Skill 负责提炼、分类和审核流程，知识包保存可追溯结果。
+根目录 README 面向使用者与维护者，说明如何发现、调用和维护项目。Skill 内部的 `SKILL.md` 与 references 面向调用 Skill 的 AI，保留执行所需内容，不重复项目说明。
 
-## 安装与使用
+## 示例书
 
-需要 Python 3.10 或更高版本：
+[`books/designing-your-life/zh-cn-2017-epub/book-essence.md`](books/designing-your-life/zh-cn-2017-epub/book-essence.md) 是一份历史输出示例，用于展示提炼结果可以如何组织。路径中的 `epub` 只记录当时的版本与来源上下文，不表示当前 Skill 依赖 EPUB 脚本，也不要求新产物沿用该目录命名。
 
-```bash
-python -m pip install -e .
-book-principles inspect private/inputs/book.epub --chapter 1 --output private/chapter-1.json
-book-principles validate books/<book-id>/<edition-id> --check-generated
-book-principles render books/<book-id>/<edition-id>
-```
+示例保留既有提炼与核验状态，但不是强制模板。新产物应以实际可读范围和当前质量检查表为准；仓库不包含示例对应的原书。
 
-源码检出但尚未安装时，可直接运行 Skill 中保留的兼容入口：
+## 已知限制
 
-```bash
-python skills/extract-book-principles/scripts/parse_epub.py private/inputs/book.epub --chapter 1
-python skills/extract-book-principles/scripts/validate_book_package.py books/<book-id>/<edition-id> --check-generated
-```
+- 读取质量取决于当前环境、文件格式、权限、扫描质量和可用上下文；Skill 不保证读取所有格式。
+- 长书可能需要分段阅读和覆盖追踪；最终综合仍可能遗漏隐含论证或跨章节细节。
+- OCR 错误、页码体系和版次差异会影响定位精度；无法确认时只能使用更粗粒度的位置。
+- AI 提炼不等于人工学术审订。未经人工核对的精确引文、页码和关键事实必须保留未验证状态。
+- 只有选章、摘要或二手材料时，只能交付对应范围的结果，不能声称完成全书提炼。
 
-本仓库的 Skill 通过 `.agents/skills/extract-book-principles` 被 Codex 发现。0.1 版本定位为仓库级 Skill；未来需要独立分发时再打包为插件。
+## 维护与验证
 
-所有受版权保护的书籍和可能包含全文的解析输出必须放在 `private/` 下。常见电子书格式也由 `.gitignore` 默认拦截。
+维护时保持单一 Skill、最少 references、一个 `agents/openai.yaml`、一个仓库级发现入口和一份默认产物：
 
-每个书籍知识包包含：
+1. 将执行指令留在 `SKILL.md`，将用户与维护者说明留在根 README。
+2. 确认 `agents/openai.yaml` 的展示信息仍与 Skill 名称、描述和默认产物一致。
+3. 检查 `SKILL.md` 对两个 references 的链接以及 `.agents/skills/extract-book-principles` 软链接。
+4. 运行 Skill Creator 的 `quick_validate.py`、最小结构与链接检查，以及 `git diff --check`。
+5. 审阅全部待提交文件，确认没有原书、全文转换物、私密输入或无关工程文件。
 
-```text
-metadata.yaml              # 书籍版本与处理状态
-book-map.md                # 全书结构和论证脉络
-summary.md                 # 人类友好的内容概要
-principles.yaml            # AI 友好的结构化原则，作为唯一事实来源
-principles.md              # 从 YAML 生成的人类阅读版
-```
-
-当前 MVP 将证据摘要与定位保存在 `principles.yaml`，并生成到 `principles.md`；独立的 `evidence.md` 留待完整样本闭环验证后再决定。
-
-## 实施阶段
-
-### 第一阶段：定义标准
-
-- 确定知识包目录和字段规范。
-- 定义原则的必要字段、来源类型和可信度等级。
-- 建立防止重复、失真和断章取义的质量标准。
-
-### 第二阶段：实现通用 Skill
-
-- 创建 `extract-book-principles` Skill。
-- 支持生成书籍地图、概要、原则和出处索引。
-- 增加知识包结构校验工具。
-
-### 第三阶段：完成样本书籍
-
-- 选择一本结构清晰的书作为首个样本。
-- 完成 AI 提炼和人工复核。
-- 根据实际使用结果调整结构与流程。
-
-### 第四阶段：发布与扩展
-
-- 从知识包自动生成人类阅读版。
-- 按需生成独立的书籍 Skill。
-- 逐步支持跨书籍原则检索、比较与场景化应用。
-
-## 维护原则
-
-- 通用 Skill 维护方法，书籍知识包维护内容，发布 Skill 维护交付形式。
-- Python 工具包维护确定性能力；Skill 脚本只保留兼容入口。
-- `principles.yaml` 是原则内容的唯一事实来源，其他格式由它生成。
-- 区分作者明确提出的原则与 AI 根据内容归纳的原则。
-- 每条原则保留适用条件、边界和原书依据。
-- 不在公开仓库提交完整的受版权保护书籍原文。
-
-## 参考资料
-
-- [双读者架构设计](docs/architecture.md)
-- [参考项目与研究](docs/reference-projects.md)
+维护检查使用当前环境的通用工具即可，不为此向仓库增加专用生成器、测试框架或 CI。
